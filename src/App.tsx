@@ -1,5 +1,6 @@
+import { Button } from 'flowbite-react'
 export default function App() {
   return (
-    <div>got here</div>
+    <Button>got here</Button>
   )
 }
