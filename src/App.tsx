@@ -5,6 +5,7 @@ import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
+import Home from './pages/Home'
 export default function App() {
   return (
     <Providers>
@@ -14,7 +15,7 @@ export default function App() {
           <div className="flex flex-col grow p-6">
           <ToastContainer className="z-40 absolute bottom-10 right-5 w-48" />
             <Routes>
-              <Route path="/" element={<div>home</div>} />
+              <Route path="/" element={<Home />} />
               <Route path="/comics" element={<div>comics</div>} />
               <Route path="/portfolio" element={<div>portfolio</div>} />
               <Route path="/contact" element={<Contact />} />
