@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify'
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
 import Contact from './pages/Contact'
+import NotFound from './pages/NotFound'
 export default function App() {
   return (
     <Providers>
@@ -17,7 +18,7 @@ export default function App() {
               <Route path="/comics" element={<div>comics</div>} />
               <Route path="/portfolio" element={<div>portfolio</div>} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<div>not found</div>} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
           <Footer />

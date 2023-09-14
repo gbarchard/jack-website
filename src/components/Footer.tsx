@@ -6,11 +6,13 @@ export default function App() {
     <Footer className="rounded-none shadow-none md:justify-end" container>
       <div className="mt-4 flex space-x-6 sm:mt-0">
         <Footer.Icon
+          className="hover:text-cyan-700"
           href="https://www.instagram.com/teskeboyart/"
           target="blank"
           icon={Instagram}
         />
         <Footer.Icon
+          className="hover:text-cyan-700"
           href="https://twitter.com/TeskeBoyArt/"
           target="blank"
           icon={Twitter}
