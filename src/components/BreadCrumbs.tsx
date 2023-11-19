@@ -10,7 +10,7 @@ export default function Breadcrumbs() {
   const navigate = useNavigate()
   if (!paths?.[0]) return null
   return (
-    <Breadcrumb className="mb-4">
+    <Breadcrumb className="mb-4 ml-2 sm:ml-0">
       <Breadcrumb.Item
         href="/"
         onClick={(e) => {

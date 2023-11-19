@@ -14,7 +14,7 @@ export default function App() {
       <div className="flex flex-col grow overflow-hidden">
         <NavBar />
         <div className="flex flex-col grow overflow-scroll">
-          <div className="flex flex-col grow p-6">
+          <div className="flex flex-col grow py-6 sm:px-6">
           <Breadcrumbs />
           <ToastContainer className="z-40 absolute bottom-10 right-5 w-48" />
             <Routes>

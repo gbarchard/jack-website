@@ -1,7 +1,14 @@
 import { RangeSlider } from 'flowbite-react'
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Link, Route, Routes, useParams } from 'react-router-dom'
 import Typography from '../components/Typography'
+import NotFound from './NotFound'
 
 export default function Comics() {
   return (
@@ -26,7 +33,10 @@ function ComicBooks() {
 
 function ChaptersPage() {
   const { comic } = useParams()
-  const chapters = useChapters(comic ?? '')
+  const { data: chapters, loading } = useChapters(comic ?? '')
+  if (!loading && !chapters) {
+    return <NotFound />
+  }
   return (
     <PanelsContainer>
       {chapters?.map((chapter) => (
@@ -42,8 +52,10 @@ function ChaptersPage() {
 
 function ComicsPages() {
   const { comic, chapter } = useParams()
-  const pages = usePages(comic ?? '', chapter ?? '')
-
+  const { data: pages, loading } = usePages(comic ?? '', chapter ?? '')
+  if (!loading && !pages) {
+    return <NotFound />
+  }
   return (
     <>
       <DesktopComicViewer comicPages={pages} />
@@ -56,7 +68,7 @@ function MobileComicViewer(props: { comicPages: ComicImage[] | undefined }) {
   return (
     <div className="sm:hidden grid grid-cols-1 gap-4">
       {props.comicPages?.map((page) => (
-        <img src={page.image} />
+        <img src={page.image} key={page.image} />
       ))}
     </div>
   )
@@ -68,6 +80,7 @@ function DesktopComicViewer(props: { comicPages: ComicImage[] | undefined }) {
 
   useEffect(() => {
     const changePage = (e: KeyboardEvent) => {
+      e.preventDefault()
       if (e.key === 'ArrowRight') {
         if (pages && page >= pages.length) return
         setPage((page) => page + 2)
@@ -83,6 +96,13 @@ function DesktopComicViewer(props: { comicPages: ComicImage[] | undefined }) {
       window.removeEventListener('keydown', changePage)
     }
   }, [setPage, page, pages])
+
+  const pageLabel = useMemo(() => {
+    if (!pages?.length) return
+    if (page === 0) return 'Cover Page'
+    if (page === pages.length) return `Page ${page - 1} / ${page - 1}`
+    return `Page ${page - 1} & ${page} / ${pages.length - 1}`
+  }, [page, pages?.length])
 
   return (
     <div className="grow sm:flex flex-col bg-white dark:bg-gray-900 hidden">
@@ -107,9 +127,7 @@ function DesktopComicViewer(props: { comicPages: ComicImage[] | undefined }) {
         tabIndex={-1}
       />
       <Typography className="max-w-none">
-        <p className="text-center">
-          Page {page} / {pages?.length}
-        </p>
+        <p className="text-center">{pageLabel}</p>
       </Typography>
     </div>
   )
@@ -140,52 +158,70 @@ type ComicImage = {
 }
 
 type GoogleStorageApi = {
-  items: {
+  items?: {
     name: string
     // and other keys...
   }[]
 }
 
 function useComics() {
-  const data = useFetch<GoogleStorageApi>(
+  const { data } = useFetch<GoogleStorageApi>(
     'https://storage.googleapis.com/storage/v1/b/jack-website/o?matchGlob=comics%2F*%2Fcover.png'
   )
-  return data?.items.map((comic) => ({
+  return data?.items?.map((comic) => ({
     route: `/${comic.name.replace('/cover.png', '')}`,
     image: `https://storage.googleapis.com/jack-website/${comic.name}`,
   }))
 }
 
 function useChapters(comic: string) {
-  const data = useFetch<GoogleStorageApi>(
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  })
+  const { data, loading } = useFetch<GoogleStorageApi>(
     `https://storage.googleapis.com/storage/v1/b/jack-website/o?matchGlob=comics%2F${comic}%2F*%2Fcover.png`
   )
-  return data?.items.map((chapter) => ({
-    route: `/${chapter.name.replace('/cover.png', '')}`,
-    image: `https://storage.googleapis.com/jack-website/${chapter.name}`,
-  }))
+  const chapters = data?.items
+    ?.map((i) => i.name)
+    .sort(collator.compare)
+    .map((chapter) => ({
+      route: `/${chapter.replace('/cover.png', '')}`,
+      image: `https://storage.googleapis.com/jack-website/${chapter}`,
+    }))
+  return { data: chapters, loading }
 }
 
 function usePages(comic: string, chapter: string) {
-  const data = useFetch<GoogleStorageApi>(
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  })
+  const { data, loading } = useFetch<GoogleStorageApi>(
     `https://storage.googleapis.com/storage/v1/b/jack-website/o?matchGlob=comics%2F${comic}%2F${chapter}%2F*.png`
   )
-  return data?.items.map((page) => ({
-    image: `https://storage.googleapis.com/jack-website/${page.name}`,
-  }))
+  const pages = data?.items
+    ?.map((i) => i.name)
+    .sort(collator.compare)
+    .map((page) => ({
+      image: `https://storage.googleapis.com/jack-website/${page}`,
+    }))
+  return { data: pages, loading }
 }
 
 function useFetch<T = unknown>(url: string) {
-  const [res, setRes] = useState<T>()
+  const [data, setData] = useState<T>()
+  const [loading, setLoading] = useState(true)
   const fetchData = useCallback(async () => {
     const data = await fetch(url)
     const json = await data.json()
-    setRes(json)
+    setLoading(false)
+    setData(json)
   }, [url])
 
   useEffect(() => {
     fetchData()
   })
 
-  return res
+  return { data, loading }
 }
