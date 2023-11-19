@@ -5,7 +5,7 @@ export default {
     './index.html',
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
   ],
-  // darkMode: 'media',
+  darkMode: 'media',
   theme: {
     extend: {},
   },

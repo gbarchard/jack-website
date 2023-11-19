@@ -3,7 +3,7 @@ import { Instagram, Twitter } from 'react-bootstrap-icons'
 
 export default function App() {
   return (
-    <Footer className="rounded-none shadow-none md:justify-end" container>
+    <Footer className="rounded-none shadow-none md:justify-end bg-gray-100" container>
       <div className="mt-4 flex space-x-6 sm:mt-0">
         <Footer.Icon
           className="hover:text-cyan-700"
