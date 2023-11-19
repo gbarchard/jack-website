@@ -13,7 +13,7 @@ export default function App() {
           navigate('/')
         }}
       >
-        Jack Teske
+        Teskboyart
       </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse>
