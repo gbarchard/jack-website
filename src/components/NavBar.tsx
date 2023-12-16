@@ -35,7 +35,7 @@ export default function App() {
         >
           Comics
         </Navbar.Link>
-        <Navbar.Link
+        {/* <Navbar.Link
           href="/portfolio"
           onClick={(e) => {
             e.preventDefault()
@@ -43,7 +43,7 @@ export default function App() {
           }}
         >
           Portfolio
-        </Navbar.Link>
+        </Navbar.Link> */}
         <Navbar.Link
           href="/contact"
           onClick={(e) => {

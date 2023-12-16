@@ -20,7 +20,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/comics/*" element={<Comics />} />
-              <Route path="/portfolio" element={<div>portfolio</div>} />
+              {/* <Route path="/portfolio" element={<div>portfolio</div>} /> */}
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
